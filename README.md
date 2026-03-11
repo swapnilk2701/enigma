@@ -18,26 +18,17 @@ Prathmesh Kanjarkar
 FutureTwin 2035 – AI Powered Career Navigation and Future Simulation Platform
 
 *GitHub Repository Link:*
-(Add your repository link here after uploading)
 
-Example:
-
-
-https://github.com/yourusername/futuretwin2035
+https://github.com/swapnilk2701/enigma.git
 
 
 *Documentation / README Link:*
 
 
-https://github.com/yourusername/futuretwin2035#readme
+https://github.com/swapnilk2701/enigma/blob/main/README.md
 
 
 ---
-
-# README / Documentation (Final Version)
-
-You can paste this in your *GitHub README.md*.
-
 
 # FutureTwin 2035
 
@@ -69,15 +60,6 @@ Version Control: Git & GitHub
 3. Install dependencies
 4. Run the Flutter web app
 
-Example commands:
-
-git clone <repository-link>
-
-cd futuretwin2035
-
-flutter pub get
-
-flutter run -d chrome
 
 ## Team Members
 Team Leader:
