@@ -1,38 +1,39 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import { sessions, messages, type InsertSession, type InsertMessage } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getSession(id: string): Promise<typeof sessions.$inferSelect | undefined>;
+  createSession(id: string): Promise<typeof sessions.$inferSelect>;
+  updateSession(id: string, data: Partial<InsertSession>): Promise<typeof sessions.$inferSelect>;
+  getChatHistory(sessionId: string): Promise<(typeof messages.$inferSelect)[]>;
+  addMessage(message: InsertMessage): Promise<typeof messages.$inferSelect>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  async getSession(id: string) {
+    const [session] = await db.select().from(sessions).where(eq(sessions.id, id));
+    return session;
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async createSession(id: string) {
+    const [session] = await db.insert(sessions).values({ id }).returning();
+    return session;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async updateSession(id: string, data: Partial<InsertSession>) {
+    const [session] = await db.update(sessions).set(data).where(eq(sessions.id, id)).returning();
+    return session;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async getChatHistory(sessionId: string) {
+    return await db.select().from(messages).where(eq(messages.sessionId, sessionId));
+  }
+
+  async addMessage(message: InsertMessage) {
+    const [msg] = await db.insert(messages).values(message).returning();
+    return msg;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
